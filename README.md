@@ -56,44 +56,44 @@
 
 
 ## Event Storming 결과
-* MSAEz 로 모델링한 이벤트스토밍 결과: http://www.msaez.io/#/storming/Rk7HwUkaXvX3C7EArWnMpnml68j1/share/4992a1785df30cc101b0e57f3400fa2d
+* MSAEz 로 모델링한 이벤트스토밍 결과: https://labs.msaez.io/#/storming/H2AHB3tx1WMi5QaOZp6oF7wvlML2/957b75f0d219cf35ff67ded5672e6254
 
 
 ### 이벤트 도출
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722729/125240557-3c4e6d80-e325-11eb-9115-3aab0c542df2.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906173-c73e1716-e64d-451f-981c-0dd14b7bc5f6.png">
 
 ### 이벤트 도출-부적격삭제
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722729/125240558-3c4e6d80-e325-11eb-9fb7-7e4ee3403089.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906181-98112b39-998b-4c03-a308-457b5e8df816.png">
 
 ### 액터, 커맨드 부착하여 읽기 좋게
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722729/125240560-3ce70400-e325-11eb-826d-8c16ca723bc4.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906197-29d46e0c-2f7d-4ed4-92ec-27f1e91db519.png">
 
 ### 어그리게잇으로 묶기
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722729/125240563-3ce70400-e325-11eb-88b7-ae0f673b22c0.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906208-d5552ab9-9187-451d-a9b9-a5ea516a8168.png">
 
 ### 바운디드 컨텍스트로 묶기
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722729/125240566-3d7f9a80-e325-11eb-9602-65894469d7e8.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906214-15b9f161-355c-484c-8d56-4f6b65c10a86.png">
 
 ### 폴리시 부착 (괄호는 수행주체, 폴리시 부착을 둘째단계에서 해놔도 상관 없음. 전체 연계가 초기에 드러남)
 
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722729/125240549-3a84aa00-e325-11eb-96e1-7019c68498ae.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906222-f3b47fef-1366-46fe-b897-f7eb43a2e7fe.png">
 
 ### 폴리시의 이동과 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
 
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722729/125240556-3bb5d700-e325-11eb-9bcf-d9c4d4d08e32.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906231-77fe26b3-7c64-416e-a1ae-708d3eef4215.png">
 
 ### 완성된 모형
-<img width="1113" alt="image" src="https://user-images.githubusercontent.com/85722851/125246650-0614ec00-e32d-11eb-8129-963e5dab211d.png">
+<img width="1113" alt="image" src="https://user-images.githubusercontent.com/88864523/133906240-e5d49d5b-d222-4d33-80b1-450ebfcfdc56.PNG">
 
 - View Model 추가
 - 도메인 서열
   - Core : reservation
-  - Supporting : resort, mypage
-  - General : payment, voucher
+  - Supporting : hotel, mypage
+  - General : payment
 
 ## 헥사고날 아키텍처 다이어그램 도출
     
-![image](https://user-images.githubusercontent.com/85722729/125151798-bcd56880-e183-11eb-876b-074a02d94116.png)
+![image](https://user-images.githubusercontent.com/88864523/133906256-c0154d9b-8d6b-4917-bc49-55f9f3c19711.png)
 
 
 
