@@ -124,7 +124,7 @@ mvn spring-boot:run
 cd payment
 mvn spring-boot:run
 
-cd View
+cd mypage
 mvn spring-boot:run
 ```
 
