@@ -65,11 +65,16 @@
 ### 이벤트 도출-부적격삭제
 <img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906181-98112b39-998b-4c03-a308-457b5e8df816.png">
 
+- 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
+- 예약시 > 호텔이 조회됨 : 업무적인 의미 이벤트라기 보다 UI 이벤트에 가까워서 제외
+
 ### 액터, 커맨드 부착하여 읽기 좋게
 <img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906197-29d46e0c-2f7d-4ed4-92ec-27f1e91db519.png">
 
 ### 어그리게잇으로 묶기
 <img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906208-d5552ab9-9187-451d-a9b9-a5ea516a8168.png">
+
+- command와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
 
 ### 바운디드 컨텍스트로 묶기
 <img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133906214-15b9f161-355c-484c-8d56-4f6b65c10a86.png">
@@ -87,9 +92,9 @@
 
 - View Model 추가
 - 도메인 서열
-  - Core : reservation
-  - Supporting : hotel, mypage
-  - General : payment
+  - Core : reservation (없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 의 경우 1주일 1회 미만)
+  - Supporting : hotel, mypage (경쟁력을 내기위한 서비스이며, SLA 수준은 연간 60% 이상 uptime 목표, 배포주기는 1주일 1회 이상을 기준으로 함)
+  - General : payment (결제서비스로 3rd Party 외부 서비스를 사용하는 것이 경쟁력이 높음)
 
 ## 헥사고날 아키텍처 다이어그램 도출
     
