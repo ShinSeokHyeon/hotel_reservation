@@ -109,7 +109,7 @@
 
 # 구현
 
-분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다)
+분석/설계 단계에서 도출된 헥사고날 아키텍처에 따라, 각 BC별로 대변되는 마이크로 서비스들을 스프링부트로 구현하였다. 구현한 각 서비스를 로컬에서 실행하는 방법은 아래와 같다 (각자의 포트넘버는 8081 ~ 808n 이다) 그 중 mypage는 CQRS를 위한 서비스이다.
 
 ```
 cd gateway
@@ -178,14 +178,145 @@ mvn spring-boot:run
 
 
 ## DDD 의 적용
-- 위 이벤트 스토밍을 통해 식별된 Micro Service 전체 5개 중 3개를 구현하였으며 그 중 mypage는 CQRS를 위한 서비스이다.
+- 각 서비스내에 도출된 핵심 Aggregate Root 객체를 Entity 로 선언하였다: (예시는 Reservation 마이크로 서비스). 이때 가능한 현업에서 사용하는 언어(유비쿼터스 랭귀지)를 영어로 번역하여 사용하였다.
 
-|MSA|기능|port|URL|
-| :--: | :--: | :--: | :--: |
-|reservation| 예약정보 관리 |8081|http://localhost:8081/reservations|
-|resort| 리조트 관리 |8082|http://localhost:8082/resorts|
-|mypage| 예약내역 조회 |8083|http://localhost:8083/mypages|
-|gateway| gateway |8088|http://localhost:8088|
+```
+
+package hotelreservation;
+
+import javax.persistence.*;
+import org.springframework.beans.BeanUtils;
+import java.util.List;
+import java.util.Date;
+
+@Entity
+@Table(name="Reservation_table")
+public class Reservation {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
+    private Long hotelId;
+    private String hotelName;
+    private String hotelStatus;
+    private String hotelType;
+    private String hotelPeriod;
+    private Float hotelPrice;
+    private String memberName;
+
+    @PostUpdate
+    public void onPostUpdate(){
+        ReservationCanceled reservationCanceled = new ReservationCanceled();
+        BeanUtils.copyProperties(this, reservationCanceled);
+        reservationCanceled.publishAfterCommit();
+
+    }
+
+    @PrePersist
+    public void onPrePersist() throws Exception {
+        hotelreservation.external.Hotel hotel = new hotelreservation.external.Hotel();
+       
+        System.out.print("#######hotelId="+hotel);
+        //hotel 서비스에서 hotel의 상태를 가져옴
+        hotel = ReservationApplication.applicationContext.getBean(hotelreservation.external.HotelService.class)
+            .getHotelStatus(hotelId);
+
+        // 예약 가능상태 여부에 따라 처리
+        if ("Available".equals(hotel.gethotelStatus())){
+            this.sethotelName(hotel.getHotelName());
+            this.sethotelPeriod(hotel.gethotelPeriod());
+            this.sethotelPrice(hotel.gethotelPrice());
+            this.sethotelType(hotel.gethotelType());
+            this.sethotelStatus("Confirmed");
+        } else {
+            throw new Exception("The hotel is not in a usable status.");
+        }
+
+    }
+
+    @PostPersist
+    public void onPostPersist() throws Exception {
+
+        ReservationRegistered reservationRegistered = new ReservationRegistered();
+        BeanUtils.copyProperties(this, reservationRegistered);
+        reservationRegistered.publishAfterCommit();
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public Long gethotelId() {
+        return hotelId;
+    }
+
+    public void sethotelId(Long hotelId) {
+        this.hotelId = hotelId;
+    }
+    public String gethotelName() {
+        return hotelName;
+    }
+
+    public void sethotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
+    public String gethotelStatus() {
+        return hotelStatus;
+    }
+
+    public void sethotelStatus(String hotelStatus) {
+        this.hotelStatus = hotelStatus;
+    }
+    public String gethotelType() {
+        return hotelType;
+    }
+
+    public void sethotelType(String hotelType) {
+        this.hotelType = hotelType;
+    }
+    public String gethotelPeriod() {
+        return hotelPeriod;
+    }
+
+    public void sethotelPeriod(String hotelPeriod) {
+        this.hotelPeriod = hotelPeriod;
+    }
+    public Float gethotelPrice() {
+        return hotelPrice;
+    }
+
+    public void sethotelPrice(Float hotelPrice) {
+        this.hotelPrice = hotelPrice;
+    }
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
+
+}
+
+```
+- Entity Pattern 과 Repository Pattern 을 적용하여 JPA 를 통하여 다양한 데이터소스 유형 (RDB or NoSQL) 에 대한 별도의 처리가 없도록 데이터 접근 어댑터를 자동 생성하기 위하여 Spring Data REST 의 RestRepository 를 적용하였다.
+
+```
+package hotelreservation;
+
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+@RepositoryRestResource(collectionResourceRel="reservations", path="reservations")
+public interface ReservationRepository extends PagingAndSortingRepository<Reservation, Long>{
+
+}
+
+```
 
 ## Gateway 적용
 - API GateWay를 통하여 마이크로 서비스들의 진입점을 통일할 수 있다. 
