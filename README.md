@@ -462,51 +462,61 @@ server:
 
 예약/예약취소 후 mypage 화면
 
-<img width="992" alt="image" src="https://user-images.githubusercontent.com/85722851/125231312-7c0d5900-e315-11eb-93bf-af4f025fc3d3.png">
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133937101-0f51efbb-3dc2-482e-9c5e-f50990aa3bfb.PNG">
 
 
 ## 동기식 호출과 Fallback 처리
 
-- 분석단계에서의 조건 중 하나로 예약(reservation)->리조트상태확인(resort) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient를 이용하여 호출하였다
+- 분석단계에서의 조건 중 하나로 예약(reservation) -> 호텔상태확인(hotel) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리하기로 하였다. 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient를 이용하여 호출하였다
 
-- 리조트서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
+- 호텔서비스를 호출하기 위하여 Stub과 (FeignClient) 를 이용하여 Service 대행 인터페이스 (Proxy) 를 구현 
 
 ```java
-# (reservation) ResortService.java
+# (reservation) HotelService.java
 
-package resortreservation.external;
+package hotelreservation.external;
 
-@FeignClient(name="resort", url="${feign.resort.url}")
-public interface ResortService {
-    
-    @RequestMapping(method= RequestMethod.GET, value="/resorts/{id}", consumes = "application/json")
-    public Resort getResortStatus(@PathVariable("id") Long id);
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Date;
+
+@FeignClient(name="hotel", url="${feign.hotel.url}")
+public interface HotelService {
+
+    @RequestMapping(method= RequestMethod.GET, value="/hotels/{id}", consumes = "application/json")
+    public Hotel getHotelStatus(@PathVariable("id") Long id);
 
 }
 ```
 
-- 예약을 처리 하기 직전(@PrePersist)에 ResortSevice를 호출하여 서비스 상태와 Resort 세부정보도 가져온다.
+- 예약을 처리 하기 직전(@PrePersist)에 HotelSevice를 호출하여 서비스 상태와 Hotel 세부정보도 가져온다.
 ```java
 # Reservation.java (Entity)
 
     @PrePersist
     public void onPrePersist() throws Exception {
-        resortreservation.external.Resort resort = new resortreservation.external.Resort();
+        hotelreservation.external.Hotel hotel = new hotelreservation.external.Hotel();
        
-        //Resort 서비스에서 Resort의 상태를 가져옴
-        resort = ReservationApplication.applicationContext.getBean(resortreservation.external.ResortService.class)
-            .getResortStatus(resortId);
+        System.out.print("#######hotelId="+hotel);
+        //Hotel 서비스에서 Hotel의 상태를 가져옴
+        hotel = ReservationApplication.applicationContext.getBean(hotelreservation.external.HotelService.class)
+            .getHotelStatus(hotelId);
 
         // 예약 가능상태 여부에 따라 처리
-        if ("Available".equals(resort.getResortStatus())){
-            this.setResortName(resort.getResortName());
-            this.setResortPeriod(resort.getResortPeriod());
-            this.setResortPrice(resort.getResortPrice());
-            this.setResortType(resort.getResortType());
-            this.setResortStatus("Confirmed");
+        if ("Available".equals(hotel.gethotelStatus())){
+            this.sethotelName(hotel.getHotelName());
+            this.sethotelPeriod(hotel.gethotelPeriod());
+            this.sethotelPrice(hotel.gethotelPrice());
+            this.sethotelType(hotel.gethotelType());
+            this.sethotelStatus("Confirmed");
         } else {
-            throw new Exception("The resort is not in a usable status.");
+            throw new Exception("The hotel is not in a usable status.");
         }
+
     }
 ```
 
