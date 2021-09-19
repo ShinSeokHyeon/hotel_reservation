@@ -448,10 +448,11 @@ server:
 
 예약 실행
 
-<img width="993" alt="image" src="https://user-images.githubusercontent.com/85722851/125231135-2769de00-e315-11eb-8b6e-f0e4711c2760.png">
+<img width="993" alt="image" src="https://user-images.githubusercontent.com/88864523/133936889-df117105-cce5-4dfe-a019-3a02c30b1769.PNG">
 
 카프카 메시지
-<img width="962" alt="image" src="https://user-images.githubusercontent.com/85722851/125224363-73625600-e308-11eb-9cd2-2dfccf0aa78f.png">
+<img width="962" alt="image" src="https://user-images.githubusercontent.com/88864523/133936956-417f87e6-c261-4da9-a5cb-c9f6b7f35ccc.PNG">
+<img width="962" alt="image" src="https://user-images.githubusercontent.com/88864523/133936980-0e057966-cfdf-4e39-81d6-2f571860e3d6.PNG">
 ```bash
 {"eventType":"ReservationRegistered","timestamp":"20210712022656","id":1,"resortId":2,"resortName":"Seoul","resortStatus":"Confirmed","resortType":"Hotel","resortPeriod":"7/23~25","resortPrice":100000.0,"memberName":"sim sang joon"}
 {"eventType":"ResortStatusChanged","timestamp":"20210712022656","id":2,"resortName":"Seoul","resortStatus":"Not Available","resortType":"Hotel","resortPeriod":"7/23~25","resortPrice":100000.0}
