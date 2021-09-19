@@ -318,6 +318,31 @@ public interface ReservationRepository extends PagingAndSortingRepository<Reserv
 
 ```
 
+- 적용 후 REST API 의 테스트 (PostMan 기준)
+
+```
+# hotel 서비스의 호텔 등록
+POST http://localhost:8082/hotels
+{
+  "hotelName": "Seoul Hotel",
+  "hotelType": "A-type",
+  "hotelPrice": 300000,
+  "hotelStatus": "Available",
+  "hotelPeriod": "2021 09/20~09/22"
+}
+
+# reservation 서비스의 호텔 예약
+POST http://localhost:8081/reservations
+{
+  "hotelId": "2",
+  "memberName": "Shin Seok Hyeon"
+}
+
+# hotel 예약 상태 확인
+GET http://localhost:8082/hotels/2
+
+```
+
 ## Gateway 적용
 - API GateWay를 통하여 마이크로 서비스들의 진입점을 통일할 수 있다. 
 다음과 같이 GateWay를 적용하였다.
