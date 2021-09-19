@@ -352,7 +352,9 @@ GET http://localhost:8082/hotels/2
 
 server:
   port: 8088
+
 ---
+
 spring:
   profiles: default
   cloud:
@@ -362,14 +364,18 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/reservations/** 
-        - id: resort
+        - id: hotel
           uri: http://localhost:8082
           predicates:
-            - Path=/resorts/** 
+            - Path=/hotels/** 
         - id: mypage
           uri: http://localhost:8083
           predicates:
             - Path= /myPages/**
+        - id: payment
+          uri: http://localhost:8084
+          predicates:
+            - Path=/payments/**  
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -381,6 +387,7 @@ spring:
               - "*"
             allowCredentials: true
 ---
+
 spring:
   profiles: docker
   cloud:
@@ -390,14 +397,18 @@ spring:
           uri: http://reservation:8080
           predicates:
             - Path=/reservations/** 
-        - id: resort
-          uri: http://resort:8080
+        - id: hotel
+          uri: http://hotel:8080
           predicates:
-            - Path=/resorts/** 
+            - Path=/hotels/** 
         - id: mypage
           uri: http://mypage:8080
           predicates:
             - Path= /myPages/**
+        - id: payment
+          uri: http://payment:8080
+          predicates:
+            - Path=/payments/** 
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -408,9 +419,11 @@ spring:
             allowedHeaders:
               - "*"
             allowCredentials: true
+
 server:
   port: 8080
 ```
+
 ## 폴리글랏 퍼시스턴스
 - CQRS 를 위한 mypage 서비스만 DB를 구분하여 적용함. 인메모리 DB인 hsqldb 사용.
 ```
