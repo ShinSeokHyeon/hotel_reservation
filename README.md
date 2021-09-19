@@ -129,7 +129,7 @@ mvn spring-boot:run
 ```
 
 
-## 시나리오 흐름 테스트
+## 시나리오 흐름 테스트 (PostMan 기준)
 1. 휴양소 관리자는 휴양소를 등록한다. (hotel 서비스의 호텔 등록) 
 
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133929998-ffb44594-5659-42c4-91ff-109c6b1b322a.PNG">
