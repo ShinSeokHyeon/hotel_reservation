@@ -549,7 +549,7 @@ public class Reservation {
 ```
 - 결제시스템과 마이페이지시스템에서는 예약완료 이벤트에 대해서 이를 수신하여 자신의 정책을 처리하도록 PolicyHandler 를 구현한다
 
-결제시스템(팀과제에서는 미구현)
+결제시스템
 ```java
 
 @Service
