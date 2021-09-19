@@ -165,17 +165,17 @@ mvn spring-boot:run
 
 
 
-5. 휴양소는 예약 가능상태로 바뀐다.
-```sh
-http aa9c6a809425d45b69b139edc5237d53-1942883713.ap-northeast-2.elb.amazonaws.com:8080/resorts/2
-```
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722851/125231271-6c8e1000-e315-11eb-92e2-bcb2897f6449.png">
+5. 해당 호텔은 예약 가능한 상태로 바뀐다.
 
-6. 고객은 휴양소 예약 정보를 확인 할 수 있다.
-```sh
-http aa9c6a809425d45b69b139edc5237d53-1942883713.ap-northeast-2.elb.amazonaws.com:8080/myPages
-```
-<img width="992" alt="image" src="https://user-images.githubusercontent.com/85722851/125231312-7c0d5900-e315-11eb-93bf-af4f025fc3d3.png">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133934750-2c3144ce-41d2-4664-98af-f59cdfd560ad.PNG">
+
+
+
+6. 고객은 호텔 예약 정보를 확인 할 수 있다.
+
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133934863-f5c9f445-bbbd-4bca-864e-709c3bd7d5a6.PNG">
+
+
 
 ## DDD 의 적용
 - 위 이벤트 스토밍을 통해 식별된 Micro Service 전체 5개 중 3개를 구현하였으며 그 중 mypage는 CQRS를 위한 서비스이다.
