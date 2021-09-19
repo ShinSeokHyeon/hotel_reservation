@@ -454,10 +454,10 @@ server:
 <img width="962" alt="image" src="https://user-images.githubusercontent.com/88864523/133936956-417f87e6-c261-4da9-a5cb-c9f6b7f35ccc.PNG">
 <img width="962" alt="image" src="https://user-images.githubusercontent.com/88864523/133936980-0e057966-cfdf-4e39-81d6-2f571860e3d6.PNG">
 ```bash
-{"eventType":"ReservationRegistered","timestamp":"20210712022656","id":1,"resortId":2,"resortName":"Seoul","resortStatus":"Confirmed","resortType":"Hotel","resortPeriod":"7/23~25","resortPrice":100000.0,"memberName":"sim sang joon"}
-{"eventType":"ResortStatusChanged","timestamp":"20210712022656","id":2,"resortName":"Seoul","resortStatus":"Not Available","resortType":"Hotel","resortPeriod":"7/23~25","resortPrice":100000.0}
-{"eventType":"ReservationCanceled","timestamp":"20210712022719","id":1,"resortId":2,"resortName":"Seoul","resortStatus":"Cancelled","resortType":"Hotel","resortPeriod":"7/23~25","resortPrice":100000.0,"memberName":"sim sang joon"}
-{"eventType":"ResortStatusChanged","timestamp":"20210712022719","id":2,"resortName":"Seoul","resortStatus":"Available","resortType":"Hotel","resortPeriod":"7/23~25","resortPrice":100000.0}
+{"eventType":"ReservationRegistered","timestamp":"20210920022205","id":1,"hotelId":2,"hotelName":"Jeju Hotel","hotelStatus":"Confirmed","hotelType":"B-type","hotelPeriod":"2021 09/20~09/22","hotelPrice":600000.0,"memberName":"Shin Seok Hyeon"}
+{"eventType":"HotelStatusChanged","timestamp":"20210920022205","id":2,"hotelName":"Jeju Hotel","hotelStatus":"Not Available","hotelType":"B-type","hotelPeriod":"2021 09/20~09/22","hotelPrice":600000.0}
+{"eventType":"ReservationCanceled","timestamp":"20210920022235","id":1,"hotelId":2,"hotelName":"Jeju Hotel","hotelStatus":"Cancelled","hotelType":"B-type","hotelPeriod":"2021 09/20~09/22","hotelPrice":600000.0,"memberName":"Shin Seok Hyeon"}
+{"eventType":"HotelStatusChanged","timestamp":"20210920022235","id":2,"hotelName":"Jeju Hotel","hotelStatus":"Available","hotelType":"B-type","hotelPeriod":"2021 09/20~09/22","hotelPrice":600000.0}
 ```
 
 예약/예약취소 후 mypage 화면
