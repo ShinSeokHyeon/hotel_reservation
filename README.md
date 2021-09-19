@@ -144,15 +144,15 @@ mvn spring-boot:run
 ```
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930112-1ded2343-5b9a-4044-9fe0-7b9aa04079a1.PNG">
 
+
 2. 고객이 호텔을 선택하여 예약한다. (reservation 서비스의 호텔 예약)
 
 <img width="993" alt="image" src="https://user-images.githubusercontent.com/88864523/133930432-c557f87b-1cbe-45bf-b56c-0beb0bec83a5.PNG">
 
-3. 예약이 확정되어 휴양소는 예약불가 상태로 바뀐다.
-```sh
-http aa9c6a809425d45b69b139edc5237d53-1942883713.ap-northeast-2.elb.amazonaws.com:8080/resorts/2
-```
-<img width="992" alt="image" src="https://user-images.githubusercontent.com/85722851/125231217-4a948d80-e315-11eb-923d-c257731b5d44.png">
+
+3. 예약이 확정되어 해당 호텔은 예약불가 상태로 바뀐다. (hotelStatus = "Not Available" 상태로 변경됨)
+
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930649-361b20a2-4660-422c-a4d2-7dd8991c5487.PNG">
 
 
 4. 고객이 확정된 예약을 취소할 수 있다.
