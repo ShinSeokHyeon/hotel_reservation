@@ -133,6 +133,8 @@ mvn spring-boot:run
 1. 휴양소 관리자는 휴양소를 등록한다. (hotel 서비스의 호텔 등록) 
 
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133929998-ffb44594-5659-42c4-91ff-109c6b1b322a.PNG">
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930089-634b273e-9ace-4f3c-b00d-00f9201db58d.PNG">
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930112-1ded2343-5b9a-4044-9fe0-7b9aa04079a1.PNG">
 
 2. 고객이 휴양소를 선택하여 예약한다.
 ```sh
