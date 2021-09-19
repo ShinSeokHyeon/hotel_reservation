@@ -567,8 +567,22 @@ public class PolicyHandler{
 ```
 마이페이지시스템
 ```java
+package hotelreservation;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.stereotype.Service;
+
+import hotelreservation.config.kafka.KafkaProcessor;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class MyPageViewHandler {
+
 
     @Autowired
     private MyPageRepository myPageRepository;
@@ -584,12 +598,12 @@ public class MyPageViewHandler {
             // view 객체에 이벤트의 Value 를 set 함
             myPage.setId(reservationRegistered.getId());
             myPage.setMemberName(reservationRegistered.getMemberName());
-            myPage.setResortId(reservationRegistered.getResortId());
-            myPage.setResortName(reservationRegistered.getResortName());
-            myPage.setResortStatus(reservationRegistered.getResortStatus());
-            myPage.setResortType(reservationRegistered.getResortType());
-            myPage.setResortPeriod(reservationRegistered.getResortPeriod());
-            myPage.setResortPrice(reservationRegistered.getResortPrice());
+            myPage.sethotelId(reservationRegistered.gethotelId());
+            myPage.sethotelName(reservationRegistered.gethotelName());
+            myPage.sethotelStatus(reservationRegistered.gethotelStatus());
+            myPage.sethotelType(reservationRegistered.gethotelType());
+            myPage.sethotelPeriod(reservationRegistered.gethotelPeriod());
+            myPage.sethotelPrice(reservationRegistered.gethotelPrice());
             // view 레파지 토리에 save
             myPageRepository.save(myPage);
         
@@ -597,19 +611,53 @@ public class MyPageViewHandler {
             e.printStackTrace();
         }
     }
+
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenReservationCanceled_then_UPDATE_1(@Payload ReservationCanceled reservationCanceled) {
+        try {
+            if (!reservationCanceled.validate()) return;
+                // view 객체 조회
+            Optional<MyPage> myPageOptional = myPageRepository.findById(reservationCanceled.getId());
+            if( myPageOptional.isPresent()) {
+                MyPage myPage = myPageOptional.get();
+                // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    myPage.sethotelStatus(reservationCanceled.gethotelStatus());
+                // view 레파지 토리에 save
+                myPageRepository.save(myPage);
+            }
+            
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 }
 ```
 - 예약 시스템은 결제시스템/마이페이지 시스템과 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 결제시스템/마이시스템이 유지보수로 인해 잠시 내려간 상태라도 예약을 받는데 문제가 없다
 ```bash
 # 마이페이지 서비스는 잠시 셧다운 시키고 결제시스템은 현재 미구현
 
-1.리조트입력
-http localhost:8082/resorts resortName="Jeju" resortType="Hotel" resortPrice=100000 resortStatus="Available" resortPeriod="7/23~25"
-http localhost:8082/resorts resortName="Seoul" resortType="Hotel" resortPrice=100000 resortStatus="Available" resortPeriod="7/23~25"
+1.호텔 등록(입력)
+- (POST) http://localhost:8082/hotels
+{
+  "hotelName": "Seoul Hotel",
+  "hotelType": "A-type",
+  "hotelPrice": 300000,
+  "hotelStatus": "Available",
+  "hotelPeriod": "2021 09/20~09/22"
+}
 
-2.예약입력
-http localhost:8081/reservations resortId=2 memberName="sim sang joon" 
-http localhost:8081/reservations #예약 정상 처리 확인
+{
+  "hotelName": "Jeju Hotel",
+  "hotelType": "B-type",
+  "hotelPrice": 600000,
+  "hotelStatus": "Available",
+  "hotelPeriod": "2021 09/20~09/22"
+}
+
+2.예약 등록(입력) 및 정상 처리 확인
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133938163-39ae07d4-f07d-4608-9c61-3f92e67207b4.PNG">
 
 3.마이페이지서비스 기동
 
