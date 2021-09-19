@@ -637,7 +637,7 @@ public class MyPageViewHandler {
 
 - 예약 시스템은 결제시스템/마이페이지 시스템과 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 결제시스템/마이시스템이 유지보수로 인해 잠시 내려간 상태라도 예약을 받는데 문제가 없다
 ```bash
-# 마이페이지, 결제 서비스는 잠시 셧다운 시킨다.
+# 마이페이지 서비스는 잠시 셧다운 시킨다. (결제 서비스는 현재 미구현)
 
 1.호텔 등록(입력)
 
@@ -667,9 +667,6 @@ public class MyPageViewHandler {
 ```bash
 3.마이페이지 서비스 기동
 cd mypage
-mvn spring-boot:run
-
-cd payment
 mvn spring-boot:run
 ```
 
