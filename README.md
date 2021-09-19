@@ -152,16 +152,17 @@ mvn spring-boot:run
 <img width="993" alt="image" src="https://user-images.githubusercontent.com/88864523/133934382-af977aad-1f93-4a07-a560-955ba09341e7.PNG">
 
 
+
 3. 예약이 확정되어 해당 호텔은 예약불가 상태로 바뀐다. (hotelStatus = "Not Available" 상태로 변경됨)
 
-<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930649-361b20a2-4660-422c-a4d2-7dd8991c5487.PNG">
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133934486-d18f87fd-c02e-4e9e-bf7e-7f3fcb9d5396.PNG">
+
 
 
 4. 고객이 확정된 예약을 취소할 수 있다.
-```sh
-http PATCH aa9c6a809425d45b69b139edc5237d53-1942883713.ap-northeast-2.elb.amazonaws.com:8080/reservations/1 resortStatus="Cancelled"
-```
-<img width="994" alt="image" src="https://user-images.githubusercontent.com/85722851/125231248-5c763080-e315-11eb-9f58-0637fed3d099.png">
+
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133934557-112bc654-1aab-4905-840a-d9d21a2ce9ea.PNG">
+
 
 
 5. 휴양소는 예약 가능상태로 바뀐다.
