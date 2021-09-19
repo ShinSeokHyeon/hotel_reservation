@@ -139,15 +139,17 @@ mvn spring-boot:run
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930089-634b273e-9ace-4f3c-b00d-00f9201db58d.PNG">
 
 
+
 ```
 - 호텔 등록 결과 화면 캡쳐
 ```
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930112-1ded2343-5b9a-4044-9fe0-7b9aa04079a1.PNG">
 
 
+
 2. 고객이 호텔을 선택하여 예약한다. (reservation 서비스의 호텔 예약)
 
-<img width="993" alt="image" src="https://user-images.githubusercontent.com/88864523/133930432-c557f87b-1cbe-45bf-b56c-0beb0bec83a5.PNG">
+<img width="993" alt="image" src="https://user-images.githubusercontent.com/88864523/133934382-af977aad-1f93-4a07-a560-955ba09341e7.PNG">
 
 
 3. 예약이 확정되어 해당 호텔은 예약불가 상태로 바뀐다. (hotelStatus = "Not Available" 상태로 변경됨)
