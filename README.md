@@ -635,15 +635,11 @@ public class MyPageViewHandler {
 }
 ```
 - 예약 시스템은 결제시스템/마이페이지 시스템과 완전히 분리되어있으며, 이벤트 수신에 따라 처리되기 때문에, 결제시스템/마이시스템이 유지보수로 인해 잠시 내려간 상태라도 예약을 받는데 문제가 없다
-```bash
 
-```
 # 마이페이지 서비스는 잠시 셧다운 시키고 결제시스템은 현재 미구현
-```
 
-```
 1.호텔 등록(입력)
-```
+
 - (POST) http://localhost:8082/hotels
 {
   "hotelName": "Seoul Hotel",
@@ -661,20 +657,17 @@ public class MyPageViewHandler {
   "hotelPeriod": "2021 09/20~09/22"
 }
 
-```
 2.예약 등록(입력) 및 정상 처리 확인
-```
+
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133938246-aa2c8daa-4a97-4e61-8d11-8b5153edf6b2.PNG">
 
-```
-3.마이페이지서비스 기동
-```
 
-```
+3.마이페이지서비스 기동
+
+
 4.마이페이지확인
 http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력이 확인 됨
 
-```
 
 
 # 운영
