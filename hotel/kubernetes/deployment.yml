@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: resort
+  name: hotel
   labels:
-    app: resort
+    app: hotel
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: resort
+      app: hotel
   template:
     metadata:
       labels:
-        app: resort
+        app: hotel
     spec:
       containers:
-        - name: resort
-          image: username/resort:latest
+        - name: hotel
+          image: username/hotel:latest
           ports:
             - containerPort: 8080
           readinessProbe:
