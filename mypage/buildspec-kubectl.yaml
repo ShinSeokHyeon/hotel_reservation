@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "team01-reservation"
-    _POD_NAME: "reservation" # low case character
+    _PROJECT_NAME: "user-shin-mypage"
+    _POD_NAME: "mypage" # low case character
 
 phases:
   install:
