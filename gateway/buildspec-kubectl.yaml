@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "team01-gateway"
+    _PROJECT_NAME: "user-shin-gateway"
     _POD_NAME: "gateway"  # low case character
 
 phases:
