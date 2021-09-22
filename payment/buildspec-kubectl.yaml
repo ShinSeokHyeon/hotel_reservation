@@ -79,16 +79,6 @@ phases:
                     image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
                     ports:
                       - containerPort: 8080
-                    resources:
-                      limits:
-                        cpu: 1000m
-                        memory: 500Mi
-                      requests:
-                        cpu: 500m
-                        memory: 300Mi
-                    volumeMounts:
-                      - mountPath: "/mnt/aws"
-                        name: volume
                     readinessProbe:
                       httpGet:
                         path: /actuator/health
@@ -105,10 +95,6 @@ phases:
                       timeoutSeconds: 2
                       periodSeconds: 5
                       failureThreshold: 5
-                volumes:
-                  - name: volume
-                    persistentVolumeClaim:
-                      claimName: aws-efs
           EOF
 cache:
   paths:
