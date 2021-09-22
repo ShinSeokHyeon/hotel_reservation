@@ -95,10 +95,6 @@ phases:
                       timeoutSeconds: 2
                       periodSeconds: 5
                       failureThreshold: 5
-                volumes:
-                  - name: volume
-                    persistentVolumeClaim:
-                      claimName: aws-efs
           EOF
 cache:
   paths:
