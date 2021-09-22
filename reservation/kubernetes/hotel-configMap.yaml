@@ -4,4 +4,4 @@ metadata:
   name: hotel-configMap
   namespace: ns-hotel
 data:
-  feign.resort.url: http://hotel:8080
+  feign.hotel.url: http://hotel:8080
