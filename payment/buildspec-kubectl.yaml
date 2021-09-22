@@ -29,7 +29,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - cd Reservation
+      - cd payment
       - mvn package -Dmaven.test.skip=true
       - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION  .
   post_build:
@@ -109,27 +109,6 @@ phases:
                   - name: volume
                     persistentVolumeClaim:
                       claimName: aws-efs
-          EOF
-      - |
-          cat <<EOF | kubectl apply -f -
-          apiVersion: autoscaling/v2beta2
-          kind: HorizontalPodAutoscaler
-          metadata:
-            name: reservation-hpa
-          spec:
-            scaleTargetRef:
-              apiVersion: apps/v1
-              kind: Deployment
-              name: $_POD_NAME
-            minReplicas: 1
-            maxReplicas: 10
-            metrics:
-            - type: Resource
-              resource:
-                name: cpu
-                target:
-                  type: Utilization
-                  averageUtilization: 50
           EOF
 cache:
   paths:
