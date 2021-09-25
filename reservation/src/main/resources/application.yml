@@ -94,10 +94,6 @@ hystrix:
     default:
       execution.isolation.thread.timeoutInMilliseconds: 610
 
-feign:
-  hotel:
-    url: hotel:8080
-
 api:
   url:
     hotel: http://hotel:8080/hotels
