@@ -62,10 +62,10 @@ spring:
         event-out:
           destination: hotelreservation
           contentType: application/json
-   jpa:
+  jpa:
     properties:
       hibernate:
         show_sql: true
         format_sql: true
- server:
-   port: 8080 # for cloud  
+server:
+  port: 8080 # for cloud  
