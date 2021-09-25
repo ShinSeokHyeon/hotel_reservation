@@ -719,7 +719,7 @@ http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력
 
 * 서킷 브레이크 프레임워크 : Spring FeignClient + Hystrix 옵션을 사용
 
-- 시나리오 : 예약(reservation) -> 휴양소(resort) 예약 시 RESTful Request/Response 로 구현이 하였고, 예약 요청이 과도할 경우 circuit breaker 를 통하여 장애격리.
+- 시나리오 : 예약(reservation) -> 호텔(hotel) 예약 시 RESTful Request/Response 로 구현 하였고, 예약 요청이 과도할 경우 circuit breaker 를 통하여 장애격리.
 Hystrix 설정: 요청처리 쓰레드에서 처리시간이 610 밀리초가 넘어서기 시작하여 어느정도 유지되면 circuit breaker 수행됨
 
 ```yaml
@@ -730,18 +730,18 @@ feign:
     
 hystrix:
   command:
-    # 전역설정
+    # 전역설정 timeout이 610ms 가 넘으면 CB 처리.
     default:
       execution.isolation.thread.timeoutInMilliseconds: 610
 
 ```
 
-피호출 서비스(휴양소:resort) 의 임의 부하 처리 - 400 밀리초 ~ 620밀리초의 지연시간 부여
+피호출 서비스(호텔:hotel) 의 임의 부하 처리 - 400 밀리초 ~ 620밀리초의 지연시간 부여
 ```java
-# (resort) ResortController.java 
+# (hotel) HotelController.java 
 
-    @RequestMapping(method= RequestMethod.GET, value="/resorts/{id}")
-        public Resort getResortStatus(@PathVariable("id") Long id){
+    @RequestMapping(method= RequestMethod.GET, value="/hotels/{id}")
+        public Hotel getHotelStatus(@PathVariable("id") Long id){
 
             //hystix test code
              try {
