@@ -35,25 +35,33 @@ logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
-server:
-  port: 8081
 
 feign:
-  hotel:
-    url: localhost:8082
   hystrix:
     enabled: true
 
 hystrix:
   command:
-    # 전역설정
+    # 전역설정 timeout이 610ms 가 넘으면 CB 처리.
     default:
       execution.isolation.thread.timeoutInMilliseconds: 610
+
+api:
+  url:
+    hotel: http://localhost:8082/hotels
+
+server:
+  port: 8081
 
 ---
 
 spring:
   profiles: docker
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
   cloud:
     stream:
       kafka:
@@ -75,6 +83,24 @@ spring:
         event-out:
           destination: hotelreservation
           contentType: application/json
+
+feign:
+  hystrix:
+    enabled: true
+
+hystrix:
+  command:
+    # 전역설정 timeout이 610ms 가 넘으면 CB 처리.
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 610
+
 feign:
   hotel:
     url: hotel:8080
+
+api:
+  url:
+    hotel: http://hotel:8080/hotels
+
+server:
+  port: 8080  #for cloud
