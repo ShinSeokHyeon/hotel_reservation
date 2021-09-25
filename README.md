@@ -684,28 +684,36 @@ http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력
 
 ## CI/CD 설정
 
-각 구현체들은 각자의 source repository 에 구성되었고, 각 서비스별로 Docker로 빌드를 하여, Docker Hub에 등록 후 deployment.yaml, service.yml을 통해 EKS에 배포함.
-- git에서 소스 가져오기
-```bash
-git clone https://github.com/simair77/resort_reservation.git
-```
-- 각서비스별 packege, build, github push 실행
-```bash
-cd resort #서비스별 폴더로 이동
-mvn package -B -Dmaven.test.skip=true #패키지
+각 구현체들은 각자의 AWS의 ECR 에 구성되었고, 사용한 CI/CD 플랫폼은 AWS-CodeBuild를 사용하였으며, pipeline build script 는 각 프로젝트 폴더 이하에 buildspec-kubectl.yaml 에 포함되었다.
 
-docker build -t simair/resort:latest . #docker build
-docker push simair/resort:latest       #docker push
+- 레포지터리 생성 확인
 
-kubectl apply -f resort/kubernetes/deployment.yml #AWS deploy 수행
-kubectl apply -f resort/kubernetes/service.yaml.  #AWS service 등록
+<img width="1251" alt="(1) 레포지터리 생성 확인" src="https://user-images.githubusercontent.com/88864523/134778989-263ea363-95bb-4f1e-890c-9318dc07e59d.PNG">
 
-```
-- Docker Hub Image
-<img width="953" alt="image" src="https://user-images.githubusercontent.com/85722851/125232400-80d30c80-e317-11eb-846c-cbd5b0ded2ba.png">
+<br/>
 
-- 최종 Deploy완료
-<img width="895" alt="image" src="https://user-images.githubusercontent.com/85722851/125232490-b4ae3200-e317-11eb-998c-88e5833866c7.png">
+- 생성 할 CodeBuild
+  - user-shin-gateway
+  - user-shin-hotel
+  - user-shin-reservation
+  - user-shin-mypage
+  - user-shin-payment
+<br/>
+
+- github의 각 서비스의 서브 폴더에 buildspec-kubectl.yaml 위치.
+
+<img width="315" alt="(2) buildspec-kubect yaml" src="https://user-images.githubusercontent.com/88864523/134779062-ede22cba-5e72-432a-8711-426a19b16745.PNG"><img width="321" alt="(3) buildspec-kubect yaml" src="https://user-images.githubusercontent.com/88864523/134779477-7cfa92f6-1a1d-486f-97ae-bc2ca8323bfd.PNG"><img width="312" alt="(4) buildspec-kubect yaml" src="https://user-images.githubusercontent.com/88864523/134779497-46fa67ab-41b0-476b-86fa-8a9d2dabbbe3.PNG">
+
+<img width="316" alt="(5) buildspec-kubect yaml" src="https://user-images.githubusercontent.com/88864523/134779509-92a51da3-e807-47e1-86c7-03a0fd0a4148.PNG"><img width="320" alt="(6) buildspec-kubect yaml" src="https://user-images.githubusercontent.com/88864523/134779511-a6e7cadb-67d6-4b7d-a673-63f60e2dc1ef.PNG">
+
+- 연결된 github에 Commit 진행시 5개의 서비스들 build 진행 여부 및 성공 확인 
+<img width="1242" alt="(7) 5개 서비스 빌드 성공 확인" src="https://user-images.githubusercontent.com/88864523/134779821-4db20fc5-b005-4565-8d9d-dda18bd60f00.PNG">
+
+
+-	배포된 5개의 Service  확인
+<img width="1062" alt="(8) 배포된 5개 서비스 확인" src="https://user-images.githubusercontent.com/88864523/134779844-953a3d82-7c6e-4d8a-96dc-c977ea2e40ea.PNG">
+
+
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
