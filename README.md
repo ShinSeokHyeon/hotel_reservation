@@ -1,5 +1,5 @@
 # 호텔_예약시스템
-<img width="559" alt="호텔 사진" src="https://user-images.githubusercontent.com/88864523/134793042-4d9a897e-7d78-4038-b1e8-50f35390ac49.PNG">
+<img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/134793042-4d9a897e-7d78-4038-b1e8-50f35390ac49.PNG">
 
 # Table of contents
 - [휴양소_예약시스템](#---)
