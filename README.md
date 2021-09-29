@@ -778,6 +778,54 @@ siege -c100 -t60S -v http://hotel:8080/hotels
 
 
 
+## Self-healing (Liveness Probe)
+- 시나리오
+  1. Reservation 서비스의 Liveness 설정을 확인힌다. 
+  2. Reservation 서비스의 Liveness Probe는 actuator의 health 상태 확인이 설정되어 있어 actuator/health 확인.
+  3. pod의 상태 모니터링
+  4. Reservation 서비스의 Liveness Probe에서 임의로 path를 잘못된 값으로 변경 후, retry 시도 확인
+  5. Reservation 서비스의 describe를 확인하여 Restart가 되는 부분을 확인한다.
+
+<br/>
+
+- Reservation 서비스의 Liveness probe 설정 확인
+```
+kubectl get deploy reservation -o yaml
+
+                  :
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 120
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 2
+                  :
+```
+
+
+
+
+
+
+
+```yml
+          livenessProbe:
+            httpGet:
+              path: '/actuator/fakehealth' <-- path를 잘못된 값으로 변경
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
+```
+- resort Pod가 여러차례 재시작 한것을 확인할 수 있다.
+<img width="757" alt="image" src="https://user-images.githubusercontent.com/85722851/125048777-3cf3c380-e0db-11eb-99cd-97c7ebead85f.png">
+
+
 ## Zero-Downtime deploy (Readiness Probe)
 - 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거하고 테스트함
 - seige로 배포중에 부하를 발생과 재배포 실행
@@ -806,22 +854,7 @@ kubectl apply -f  kubernetes/deployment.yml
 <img width="503" alt="image" src="https://user-images.githubusercontent.com/85722851/125044747-3cf1c480-e0d7-11eb-9c35-1091547bb099.png">
 배포기간 동안 Availability 가 100%를 유지하기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
-## Self-healing (Liveness Probe)
-- Pod는 정상적으로 작동하지만 내부의 어플리케이션이 반응이 없다면, 컨테이너는 의미가 없다.
-- 위와 같은 경우는 어플리케이션의 Liveness probe는 Pod의 상태를 체크하다가, Pod의 상태가 비정상인 경우 kubelet을 통해서 재시작한다.
-- 임의대로 Liveness probe에서 path를 잘못된 값으로 변경 후, retry 시도 확인
-```yml
-          livenessProbe:
-            httpGet:
-              path: '/actuator/fakehealth' <-- path를 잘못된 값으로 변경
-              port: 8080
-            initialDelaySeconds: 120
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 5
-```
-- resort Pod가 여러차례 재시작 한것을 확인할 수 있다.
-<img width="757" alt="image" src="https://user-images.githubusercontent.com/85722851/125048777-3cf3c380-e0db-11eb-99cd-97c7ebead85f.png">
+
 
 ## ConfigMap 사용
 - 시스템별로 또는 운영중에 동적으로 변경 가능성이 있는 설정들을 ConfigMap을 사용하여 관리합니다. Application에서 특정 도메일 URL을 ConfigMap 으로 설정하여 운영/개발등 목적에 맞게 변경가능합니다.
