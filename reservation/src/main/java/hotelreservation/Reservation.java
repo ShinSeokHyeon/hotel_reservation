@@ -38,9 +38,11 @@ public class Reservation {
             .getHotelStatus(hotelId);
 
         // fallback hotel이 null 이므로 예외처리 수행
+        /*
         if (hotel == null){ 
             throw new Exception("The hotel is not in a usable status.");
         }
+        */
         
         // 예약 가능상태 여부에 따라 처리
         if ("Available".equals(hotel.gethotelStatus())){
