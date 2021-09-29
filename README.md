@@ -830,7 +830,10 @@ kubectl get deploy reservation -o yaml
 ```
 
 - Reservation Pod가 여러차례 재시작 한것을 확인할 수 있다.
-<img width="757" alt="image" src="https://user-images.githubusercontent.com/85722851/125048777-3cf3c380-e0db-11eb-99cd-97c7ebead85f.png">
+<img width="757" alt="image" src="https://user-images.githubusercontent.com/88864523/135333326-a2f1dceb-fc0b-4b30-a393-a00b587ddd3d.PNG">
+
+<img width="757" alt="image" src="https://user-images.githubusercontent.com/88864523/135333699-f6c23394-f611-4bab-9b77-c562177f7101.PNG">
+
 
 
 ## Zero-Downtime deploy (Readiness Probe)
