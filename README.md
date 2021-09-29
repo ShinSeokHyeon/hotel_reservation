@@ -129,7 +129,7 @@ mvn spring-boot:run
 ```
 
 
-## 시나리오 흐름 테스트 (PostMan & CI/CD배포 후 테스트 화면 캡쳐)
+## 시나리오 흐름 테스트 (PostMan 기준)
 1. 호텔 관리자는 호텔을 등록한다. (hotel 서비스의 호텔 등록) 
 
 ```
@@ -144,23 +144,9 @@ mvn spring-boot:run
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930112-1ded2343-5b9a-4044-9fe0-7b9aa04079a1.PNG">
 
 
-```sh
-http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/hotels hotelName="Seoul Hotel" hotelType="A-type" hotelPrice=300000 hotelStatus="Available" hotelPeriod="2021 09/30~10/01"
-http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/hotels hotelName="Jeju Hotel" hotelType="B-type" hotelPrice=600000 hotelStatus="Available" hotelPeriod="2021 09/30~10/01"
-http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/hotels
-```
-<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/135278468-f8f27f91-6182-49a9-a702-432cd5930fb9.PNG">
-
-
-
 2. 고객이 호텔을 선택하여 예약한다. (reservation 서비스의 호텔 예약)
 
 <img width="993" alt="image" src="https://user-images.githubusercontent.com/88864523/133934382-af977aad-1f93-4a07-a560-955ba09341e7.PNG">
-
-```sh
-http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/reservations hotelId=2 memberName="Shin Seok Hyeon"
-```
-<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/135279588-47c731b1-3898-4af8-8386-34266486b092.PNG">
 
 
 3. 예약이 확정되어 해당 호텔은 예약불가 상태로 바뀐다. (hotelStatus = "Not Available" 상태로 변경됨)
@@ -168,11 +154,9 @@ http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133934486-d18f87fd-c02e-4e9e-bf7e-7f3fcb9d5396.PNG">
 
 
-
 4. 고객이 확정된 예약을 취소할 수 있다.
 
 <img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/133934557-112bc654-1aab-4905-840a-d9d21a2ce9ea.PNG">
-
 
 
 5. 해당 호텔은 예약 가능한 상태로 바뀐다.
