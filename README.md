@@ -709,6 +709,107 @@ http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력
 
 
 
+
+## 오토스케일 아웃
+- 앞서 CB 는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다. 
+- 리조트서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 20프로를 넘어서면 replica 를 10개까지 늘려준다:
+```bash
+kubectl autoscale deployment resort --cpu-percent=20 --min=1 --max=10
+```
+- CB 에서 했던 방식대로 워크로드를 100초 동안 걸어준다.
+```bash
+siege -c20 -t100S -v http://resort:8080/resorts 
+```
+<img width="533" alt="image" src="https://user-images.githubusercontent.com/85722851/125200066-20ef4e00-e2a4-11eb-893e-7407615daa18.png">
+
+- 오토스케일이 어떻게 되고 있는지 모니터링을 해보면 어느정도 시간이 흐른 후 스케일 아웃이 벌어지는 것을 확인할 수 있다:
+<img width="704" alt="image" src="https://user-images.githubusercontent.com/85722851/125234907-926ae300-e31c-11eb-8be4-377f595f9a24.png">
+
+
+## Zero-Downtime deploy (Readiness Probe)
+- 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거하고 테스트함
+- seige로 배포중에 부하를 발생과 재배포 실행
+```bash
+root@siege:/# siege -c1 -t30S -v http://resort:8080/resorts 
+kubectl apply -f  kubernetes/deployment.yml 
+```
+- seige 의 화면으로 넘어가서 Availability 가 100% 미만으로 떨어졌는지 확인
+
+<img width="552" alt="image" src="https://user-images.githubusercontent.com/85722851/125045082-922dd600-e0d7-11eb-9128-4c9eff39654c.png">
+배포기간중 Availability 가 평소 100%에서 80% 대로 떨어지는 것을 확인. 원인은 쿠버네티스가 성급하게 새로 올려진 서비스를 READY 상태로 인식하여 서비스 유입을 진행한 것이기 때문. 
+
+- 이를 막기위해 Readiness Probe 를 설정함: deployment.yaml 의 readiness probe 추가
+```yml
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+```
+
+- 동일한 시나리오로 재배포 한 후 Availability 확인
+<img width="503" alt="image" src="https://user-images.githubusercontent.com/85722851/125044747-3cf1c480-e0d7-11eb-9c35-1091547bb099.png">
+배포기간 동안 Availability 가 100%를 유지하기 때문에 무정지 재배포가 성공한 것으로 확인됨.
+
+## Self-healing (Liveness Probe)
+- Pod는 정상적으로 작동하지만 내부의 어플리케이션이 반응이 없다면, 컨테이너는 의미가 없다.
+- 위와 같은 경우는 어플리케이션의 Liveness probe는 Pod의 상태를 체크하다가, Pod의 상태가 비정상인 경우 kubelet을 통해서 재시작한다.
+- 임의대로 Liveness probe에서 path를 잘못된 값으로 변경 후, retry 시도 확인
+```yml
+          livenessProbe:
+            httpGet:
+              path: '/actuator/fakehealth' <-- path를 잘못된 값으로 변경
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
+```
+- resort Pod가 여러차례 재시작 한것을 확인할 수 있다.
+<img width="757" alt="image" src="https://user-images.githubusercontent.com/85722851/125048777-3cf3c380-e0db-11eb-99cd-97c7ebead85f.png">
+
+## ConfigMap 사용
+- 시스템별로 또는 운영중에 동적으로 변경 가능성이 있는 설정들을 ConfigMap을 사용하여 관리합니다. Application에서 특정 도메일 URL을 ConfigMap 으로 설정하여 운영/개발등 목적에 맞게 변경가능합니다.
+configMap 생성
+```bash
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resort-cm
+data:
+    api.resort.url: resort:8080
+EOF
+```
+configmap 생성 후 조회
+<img width="881" alt="image" src="https://user-images.githubusercontent.com/85722851/125245232-470c0100-e32b-11eb-9db1-54f35d1b2e4c.png">
+deployment.yml 변경
+```yml
+      containers:
+          ...
+          env:
+            - name: feign.resort.url
+              valueFrom:
+                configMapKeyRef:
+                  name: resort-cm
+                  key: api.resort.url
+```
+ResortService.java내용
+```java
+@FeignClient(name="resort", url="${feign.resort.url}")
+public interface ResortService {
+
+    @RequestMapping(method= RequestMethod.GET, value="/resorts/{id}", consumes = "application/json")
+    public Resort getResortStatus(@PathVariable("id") Long id);
+
+}
+```
+생성된 Pod 상세 내용 확인
+<img width="1036" alt="image" src="https://user-images.githubusercontent.com/85722851/125245075-162bcc00-e32b-11eb-80ab-81fa57e774d8.png">
+
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
 * 서킷 브레이크 프레임워크 : Spring FeignClient + Hystrix 옵션을 사용
@@ -854,105 +955,4 @@ Shortest transaction:           1.33
 ![image](https://user-images.githubusercontent.com/58622901/125236603-40778c80-e31f-11eb-81a7-eeaa4863239d.png)
 
 ![image](https://user-images.githubusercontent.com/58622901/125236641-4ff6d580-e31f-11eb-8659-6886b5cfacc5.png)
-
-
-## 오토스케일 아웃
-- 앞서 CB 는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다. 
-- 리조트서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 20프로를 넘어서면 replica 를 10개까지 늘려준다:
-```bash
-kubectl autoscale deployment resort --cpu-percent=20 --min=1 --max=10
-```
-- CB 에서 했던 방식대로 워크로드를 100초 동안 걸어준다.
-```bash
-siege -c20 -t100S -v http://resort:8080/resorts 
-```
-<img width="533" alt="image" src="https://user-images.githubusercontent.com/85722851/125200066-20ef4e00-e2a4-11eb-893e-7407615daa18.png">
-
-- 오토스케일이 어떻게 되고 있는지 모니터링을 해보면 어느정도 시간이 흐른 후 스케일 아웃이 벌어지는 것을 확인할 수 있다:
-<img width="704" alt="image" src="https://user-images.githubusercontent.com/85722851/125234907-926ae300-e31c-11eb-8be4-377f595f9a24.png">
-
-
-## Zero-Downtime deploy (Readiness Probe)
-- 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거하고 테스트함
-- seige로 배포중에 부하를 발생과 재배포 실행
-```bash
-root@siege:/# siege -c1 -t30S -v http://resort:8080/resorts 
-kubectl apply -f  kubernetes/deployment.yml 
-```
-- seige 의 화면으로 넘어가서 Availability 가 100% 미만으로 떨어졌는지 확인
-
-<img width="552" alt="image" src="https://user-images.githubusercontent.com/85722851/125045082-922dd600-e0d7-11eb-9128-4c9eff39654c.png">
-배포기간중 Availability 가 평소 100%에서 80% 대로 떨어지는 것을 확인. 원인은 쿠버네티스가 성급하게 새로 올려진 서비스를 READY 상태로 인식하여 서비스 유입을 진행한 것이기 때문. 
-
-- 이를 막기위해 Readiness Probe 를 설정함: deployment.yaml 의 readiness probe 추가
-```yml
-          readinessProbe:
-            httpGet:
-              path: '/actuator/health'
-              port: 8080
-            initialDelaySeconds: 10
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 10
-```
-
-- 동일한 시나리오로 재배포 한 후 Availability 확인
-<img width="503" alt="image" src="https://user-images.githubusercontent.com/85722851/125044747-3cf1c480-e0d7-11eb-9c35-1091547bb099.png">
-배포기간 동안 Availability 가 100%를 유지하기 때문에 무정지 재배포가 성공한 것으로 확인됨.
-
-## Self-healing (Liveness Probe)
-- Pod는 정상적으로 작동하지만 내부의 어플리케이션이 반응이 없다면, 컨테이너는 의미가 없다.
-- 위와 같은 경우는 어플리케이션의 Liveness probe는 Pod의 상태를 체크하다가, Pod의 상태가 비정상인 경우 kubelet을 통해서 재시작한다.
-- 임의대로 Liveness probe에서 path를 잘못된 값으로 변경 후, retry 시도 확인
-```yml
-          livenessProbe:
-            httpGet:
-              path: '/actuator/fakehealth' <-- path를 잘못된 값으로 변경
-              port: 8080
-            initialDelaySeconds: 120
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 5
-```
-- resort Pod가 여러차례 재시작 한것을 확인할 수 있다.
-<img width="757" alt="image" src="https://user-images.githubusercontent.com/85722851/125048777-3cf3c380-e0db-11eb-99cd-97c7ebead85f.png">
-
-## ConfigMap 사용
-- 시스템별로 또는 운영중에 동적으로 변경 가능성이 있는 설정들을 ConfigMap을 사용하여 관리합니다. Application에서 특정 도메일 URL을 ConfigMap 으로 설정하여 운영/개발등 목적에 맞게 변경가능합니다.
-configMap 생성
-```bash
-kubectl apply -f - <<EOF
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: resort-cm
-data:
-    api.resort.url: resort:8080
-EOF
-```
-configmap 생성 후 조회
-<img width="881" alt="image" src="https://user-images.githubusercontent.com/85722851/125245232-470c0100-e32b-11eb-9db1-54f35d1b2e4c.png">
-deployment.yml 변경
-```yml
-      containers:
-          ...
-          env:
-            - name: feign.resort.url
-              valueFrom:
-                configMapKeyRef:
-                  name: resort-cm
-                  key: api.resort.url
-```
-ResortService.java내용
-```java
-@FeignClient(name="resort", url="${feign.resort.url}")
-public interface ResortService {
-
-    @RequestMapping(method= RequestMethod.GET, value="/resorts/{id}", consumes = "application/json")
-    public Resort getResortStatus(@PathVariable("id") Long id);
-
-}
-```
-생성된 Pod 상세 내용 확인
-<img width="1036" alt="image" src="https://user-images.githubusercontent.com/85722851/125245075-162bcc00-e32b-11eb-80ab-81fa57e774d8.png">
 
