@@ -79,7 +79,7 @@ phases:
                     image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
                     ports:
                       - containerPort: 8080
-                     resources:
+                    resources:
                       limits:
                         cpu: 1000m
                         memory: 500Mi
