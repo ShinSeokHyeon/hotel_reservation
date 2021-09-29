@@ -774,6 +774,8 @@ siege -c100 -t60S -v http://hotel:8080/hotels
 
 <img width="582" alt="스크린샷 2021-09-15 오후 3 08 36" src="https://user-images.githubusercontent.com/88864523/135320217-763b4900-9934-4d76-b656-052d68de1ee6.PNG"> 
 
+<img width="582" alt="스크린샷 2021-09-15 오후 3 08 36" src="https://user-images.githubusercontent.com/88864523/135321167-a6586d82-e364-4afc-a61d-7987e84c155f.PNG"> 
+
 
 
 ## Zero-Downtime deploy (Readiness Probe)
