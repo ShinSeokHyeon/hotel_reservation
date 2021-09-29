@@ -806,11 +806,17 @@ kubectl get deploy reservation -o yaml
                   :
 ```
 
+- Httpie를 사용하기 위해 Siege를 설치하고 해당 컨테이너로 접속한다.
+```
+> kubectl create deploy siege --image=ghcr.io/acmexii/siege-nginx:latest
+> kubectl exec pod/[SIEGE-POD객체] -it -- /bin/bash
+```
+
+- Liveness Probe 확인 
+<img width="582" alt="스크린샷 2021-09-15 오후 3 11 13" src="https://user-images.githubusercontent.com/88864523/135328496-3cf36103-f7e6-4eba-8f00-e85e09641279.PNG">
 
 
-
-
-
+- Reservation 서비스의 Liveness Probe에서 임의로 path를 잘못된 값으로 변경
 
 ```yml
           livenessProbe:
@@ -822,7 +828,8 @@ kubectl get deploy reservation -o yaml
             periodSeconds: 5
             failureThreshold: 5
 ```
-- resort Pod가 여러차례 재시작 한것을 확인할 수 있다.
+
+- Reservation Pod가 여러차례 재시작 한것을 확인할 수 있다.
 <img width="757" alt="image" src="https://user-images.githubusercontent.com/85722851/125048777-3cf3c380-e0db-11eb-99cd-97c7ebead85f.png">
 
 
