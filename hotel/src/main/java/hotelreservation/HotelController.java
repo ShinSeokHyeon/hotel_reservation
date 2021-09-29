@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
  @RestController
  public class HotelController {
-
-	 	private HotelRepository repository;
+	
+	 /*
+	 private HotelRepository repository;
 
 	    public HotelController(HotelRepository repository){
 	        this.repository = repository;
@@ -26,5 +27,5 @@ import org.springframework.web.bind.annotation.RestController;
 	        return repository.findById(id).get();
 	    }
 
-
+	*/
  }
