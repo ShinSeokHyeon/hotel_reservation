@@ -157,6 +157,10 @@ http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com
 
 <img width="993" alt="image" src="https://user-images.githubusercontent.com/88864523/133934382-af977aad-1f93-4a07-a560-955ba09341e7.PNG">
 
+```sh
+http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/reservations hotelId=2 memberName="Shin Seok Hyeon"
+```
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/135279588-47c731b1-3898-4af8-8386-34266486b092.PNG">
 
 
 3. 예약이 확정되어 해당 호텔은 예약불가 상태로 바뀐다. (hotelStatus = "Not Available" 상태로 변경됨)
