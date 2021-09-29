@@ -17,7 +17,7 @@ phases:
       - mv ./kubectl /usr/local/bin/kubectl
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
+      - echo Logging in to Amazon ECR... 
       - echo $_PROJECT_NAME
       - echo $_POD_NAME
       - echo $AWS_ACCOUNT_ID
