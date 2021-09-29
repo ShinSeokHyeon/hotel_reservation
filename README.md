@@ -711,19 +711,69 @@ http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력
 
 
 ## 오토스케일 아웃
-- 앞서 CB 는 시스템을 안정되게 운영할 수 있게 해줬지만 사용자의 요청을 100% 받아들여주지 못했기 때문에 이에 대한 보완책으로 자동화된 확장 기능을 적용하고자 한다. 
-- 리조트서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 20프로를 넘어서면 replica 를 10개까지 늘려준다:
-```bash
-kubectl autoscale deployment resort --cpu-percent=20 --min=1 --max=10
+- 호텔 서비스(Hotel)에 대해 CPU Load 50%를 넘어서면 Replica를 10까지 늘려준다. 
+  - buildspec-kubectl.yaml
 ```
-- CB 에서 했던 방식대로 워크로드를 100초 동안 걸어준다.
-```bash
-siege -c20 -t100S -v http://resort:8080/resorts 
+          cat <<EOF | kubectl apply -f -
+          apiVersion: autoscaling/v2beta2
+          kind: HorizontalPodAutoscaler
+          metadata:
+            name: reservation-hpa
+          spec:
+            scaleTargetRef:
+              apiVersion: apps/v1
+              kind: Deployment
+              name: $_POD_NAME
+            minReplicas: 1
+            maxReplicas: 10
+            metrics:
+            - type: Resource
+              resource:
+                name: cpu
+                target:
+                  type: Utilization
+                  averageUtilization: 50
+          EOF
 ```
-<img width="533" alt="image" src="https://user-images.githubusercontent.com/85722851/125200066-20ef4e00-e2a4-11eb-893e-7407615daa18.png">
+- 호텔 서비스(Hotel)에 대한 CPU Resouce를 1000m으로 제한 한다.
+  - buildspec-kubectl.yaml
+```
+                    resources:
+                      limits:
+                        cpu: 1000m
+                        memory: 500Mi
+                      requests:
+                        cpu: 500m
+                        memory: 300Mi
+```
 
-- 오토스케일이 어떻게 되고 있는지 모니터링을 해보면 어느정도 시간이 흐른 후 스케일 아웃이 벌어지는 것을 확인할 수 있다:
-<img width="704" alt="image" src="https://user-images.githubusercontent.com/85722851/125234907-926ae300-e31c-11eb-8be4-377f595f9a24.png">
+- Siege (로더제너레이터)를 설치하고 해당 컨테이너로 접속한다.
+```
+> kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: siege
+spec:
+  containers:
+  - name: siege
+    image: apexacme/siege-nginx
+EOF
+
+> kubectl exec -it siege -- /bin/bash
+
+```
+- 호텔 서비스(Hotel)에 워크 로드를 동시 사용자 100명 60초 동안 진행한다.
+```
+siege -c100 -t60S -v http://hotel:8080/hotels
+```
+- 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다 : 각각의 Terminal에 
+  - 어느 정도 시간이 흐른 후 (약 30초) 스케일 아웃이 벌어지는 것을 확인할 수 있다.
+
+<img width="582" alt="스크린샷 2021-09-15 오후 3 08 36" src="https://user-images.githubusercontent.com/88864523/135320044-3ac01f59-1f26-4e20-afd6-5231e60d06ef.PNG"> 
+
+<img width="582" alt="스크린샷 2021-09-15 오후 3 08 36" src="https://user-images.githubusercontent.com/88864523/135320217-763b4900-9934-4d76-b656-052d68de1ee6.PNG"> 
+
 
 
 ## Zero-Downtime deploy (Readiness Probe)
