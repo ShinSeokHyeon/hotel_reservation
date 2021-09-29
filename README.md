@@ -129,7 +129,7 @@ mvn spring-boot:run
 ```
 
 
-## 시나리오 흐름 테스트 (PostMan 기준)
+## 시나리오 흐름 테스트 (PostMan & CI/CD배포 후 테스트 화면 캡쳐)
 1. 호텔 관리자는 호텔을 등록한다. (hotel 서비스의 호텔 등록) 
 
 ```
@@ -138,12 +138,18 @@ mvn spring-boot:run
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133929998-ffb44594-5659-42c4-91ff-109c6b1b322a.PNG">
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930089-634b273e-9ace-4f3c-b00d-00f9201db58d.PNG">
 
-
-
 ```
 - 호텔 등록 결과 화면 캡쳐
 ```
 <img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/133930112-1ded2343-5b9a-4044-9fe0-7b9aa04079a1.PNG">
+
+
+```sh
+http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/hotels hotelName="Seoul Hotel" hotelType="A-type" hotelPrice=300000 hotelStatus="Available" hotelPeriod="2021 09/30~10/01"
+http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/hotels hotelName="Jeju Hotel" hotelType="B-type" hotelPrice=600000 hotelStatus="Available" hotelPeriod="2021 09/30~10/01"
+http a11fe413b9cbe4357a49b2fafb4abef2-620959389.ap-northeast-1.elb.amazonaws.com:8080/hotels
+```
+<img width="992" alt="image" src="https://user-images.githubusercontent.com/88864523/135278468-f8f27f91-6182-49a9-a702-432cd5930fb9.PNG">
 
 
 
