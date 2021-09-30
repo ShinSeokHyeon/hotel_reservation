@@ -839,7 +839,7 @@ kubectl get deploy reservation -o yaml
 
 ## Zero-Downtime deploy (Readiness Probe)
 - 시나리오
-  1. 현재 구동중인 hotel 서비스에 길게(2분) 부하를 준다. 
+  1. 현재 구동중인 hotel 서비스에 부하를 준다. 
   2. Hotel pod의 상태 모니터링
   3. AWS > CodeBuild에 연결 되어있는 github의 코드를 commit한다.
   4. Codebuild를 통해 새로운 버전의 Hotel 서비스가 배포 된다. 
@@ -861,11 +861,11 @@ kubectl get deploy reservation -o yaml
                       failureThreshold: 10
 ```
 
-- 현재 구동중인 Hotel 서비스에 길게(2분) 부하를 준다. 
+- 현재 구동중인 Hotel 서비스에 1분 정도 부하를 준다. 
 ```
-> siege -v -c1 -t120S http://hotel:8080/hotels  
+> siege -v -c1 -t60S http://hotel:8080/hotels  
 ```
-<img width="794" alt="스크린샷 2021-09-15 오후 3 32 43" src="https://user-images.githubusercontent.com/89987635/133385792-924fefb0-562f-4697-bdc6-67baba830247.png">
+<img width="794" alt="스크린샷 2021-09-15 오후 3 32 43" src="https://user-images.githubusercontent.com/88864523/135385364-710915bd-43a8-40e6-acaa-ad9b2b096541.PNG">
 
 - AWS에 CodeBuild에 연결 되어있는 github의 코드를 commit한다.
   Hotel 서비스의 아무 코드나 수정하고 commit 한다. 
@@ -874,7 +874,7 @@ kubectl get deploy reservation -o yaml
 
 - pod 상태 모니터링에서 기존 Hotel 서비스가 Terminating 되고 새로운 Hotel 서비스가 Running하는 것을 확인한다.
 - pod의 상태 모니터링
-<img width="586" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/89987635/133394310-befb67aa-4384-40f3-a33c-974f1ee52d79.png">
+<img width="586" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/88864523/135385406-913a8463-f423-4d3d-ac15-88209a2142e6.PNG">
 
 
 
