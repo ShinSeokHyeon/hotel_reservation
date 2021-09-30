@@ -22,7 +22,7 @@
     - [Self-healing (Liveness Probe)](#Self-healing-Liveness-Probe)
     - [Zero-Downtime deploy (Readiness Probe)](#Zero-Downtime-deploy-Readiness-Probe)
     - [ConfigMap 사용](#ConfigMap-사용)
-    - [동기식 호출 / 서킷 브레이킹 / 장애격리](#동기식-호출--서킷-브레이킹--장애격리) 
+    - [서킷 브레이킹 / 장애격리](#동기식-호출--서킷-브레이킹--장애격리) 
 
      
 # 서비스 시나리오
