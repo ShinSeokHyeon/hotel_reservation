@@ -687,11 +687,11 @@ http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력
 <br/>
 
 - 생성 할 CodeBuild
-  - user-shin-gateway
-  - user-shin-hotel
-  - user-shin-reservation
-  - user-shin-mypage
-  - user-shin-payment
+  - user11-gateway
+  - user11-hotel
+  - user11-reservation
+  - user11-mypage
+  - user11-payment
 <br/>
 
 - github의 각 서비스의 서브 폴더에 buildspec-kubectl.yaml 위치.
