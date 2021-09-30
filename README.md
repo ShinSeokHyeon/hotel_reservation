@@ -701,11 +701,11 @@ http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력
 <img width="316" alt="(5) buildspec-kubect yaml" src="https://user-images.githubusercontent.com/88864523/134779509-92a51da3-e807-47e1-86c7-03a0fd0a4148.PNG"><img width="320" alt="(6) buildspec-kubect yaml" src="https://user-images.githubusercontent.com/88864523/134779511-a6e7cadb-67d6-4b7d-a673-63f60e2dc1ef.PNG">
 
 - 연결된 github에 Commit 진행시 5개의 서비스들 build 진행 여부 및 성공 확인 
-<img width="1242" alt="(7) 5개 서비스 빌드 성공 확인" src="https://user-images.githubusercontent.com/88864523/134779821-4db20fc5-b005-4565-8d9d-dda18bd60f00.PNG">
+<img width="1242" alt="(7) 5개 서비스 빌드 성공 확인" src="https://user-images.githubusercontent.com/88864523/135383246-b8c01574-0a7f-49b2-9ef4-f5a65f5d2474.PNG">
 
 
 -	배포된 5개의 Service  확인
-<img width="1062" alt="(8) 배포된 5개 서비스 확인" src="https://user-images.githubusercontent.com/88864523/134779844-953a3d82-7c6e-4d8a-96dc-c977ea2e40ea.PNG">
+<img width="1062" alt="(8) 배포된 5개 서비스 확인" src="https://user-images.githubusercontent.com/88864523/135383283-997dace2-079b-4615-83bc-26302afa3304.PNG">
 
 
 
