@@ -40,8 +40,8 @@ server:
   port: 8081
 
 feign:
-  #hotel:
-    #url: localhost:8082
+  hotel:
+    url: localhost:8082
   hystrix:
     enabled: true
 
@@ -83,8 +83,8 @@ spring:
           contentType: application/json
 
 feign:
-  #hotel:
-    #url: hotel:8080
+  hotel:
+    url: hotel:8080
   hystrix:
     enabled: true
 
