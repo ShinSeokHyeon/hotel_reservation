@@ -79,12 +79,6 @@ phases:
                     image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$_PROJECT_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
                     ports:
                       - containerPort: 8080
-                    env:
-                      - name: feign.hotel.url
-                        valueFrom:
-                         configMapKeyRef:
-                          name: hotel-cm
-                          key: api.hotel.url
                     readinessProbe:
                       httpGet:
                         path: /actuator/health
