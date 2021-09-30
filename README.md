@@ -2,7 +2,7 @@
 <img width="994" alt="image" src="https://user-images.githubusercontent.com/88864523/134793042-4d9a897e-7d78-4038-b1e8-50f35390ac49.PNG">
 
 # Table of contents
-- [휴양소_예약시스템](#---)
+- [호텔_예약시스템](#---)
   - [서비스 시나리오](#서비스-시나리오)
   - [분석/설계](#분석설계)
     - [AS-IS 조직 (Horizontally-Aligned)](#AS-IS-조직-Horizontally-Aligned)
