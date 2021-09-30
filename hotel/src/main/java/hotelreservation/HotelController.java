@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  public class HotelController {
 	
 	 
-	 private HotelRepository repository;
+	    private HotelRepository repository;
 
 	    public HotelController(HotelRepository repository){
 	        this.repository = repository;
