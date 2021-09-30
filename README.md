@@ -22,7 +22,7 @@
     - [오토스케일 아웃](#오토스케일-아웃)
     - [Zero-Downtime deploy (Readiness Probe)](#Zero-Downtime-deploy-Readiness-Probe)
     - [Self-healing (Liveness Probe)](#Self-healing-Liveness-Probe)
-    - [ConfigMap 사용](#ConfigMap-사용)
+    - [ConfigMap 사용](#ConfigMap-사용) 
 
     
 # 서비스 시나리오
