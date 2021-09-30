@@ -767,6 +767,8 @@ EOF
 ```
 siege -c100 -t60S -v http://hotel:8080/hotels
 ```
+<img width="582" alt="스크린샷 2021-09-15 오후 3 08 36" src="https://user-images.githubusercontent.com/88864523/135321167-a6586d82-e364-4afc-a61d-7987e84c155f.PNG"> 
+
 - 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다 : 각각의 Terminal에 
   - 어느 정도 시간이 흐른 후 (약 30초) 스케일 아웃이 벌어지는 것을 확인할 수 있다.
 
@@ -774,7 +776,6 @@ siege -c100 -t60S -v http://hotel:8080/hotels
 
 <img width="582" alt="스크린샷 2021-09-15 오후 3 08 36" src="https://user-images.githubusercontent.com/88864523/135320217-763b4900-9934-4d76-b656-052d68de1ee6.PNG"> 
 
-<img width="582" alt="스크린샷 2021-09-15 오후 3 08 36" src="https://user-images.githubusercontent.com/88864523/135321167-a6586d82-e364-4afc-a61d-7987e84c155f.PNG"> 
 
 
 
