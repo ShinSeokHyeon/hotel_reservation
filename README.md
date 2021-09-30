@@ -837,32 +837,44 @@ kubectl get deploy reservation -o yaml
 
 
 ## Zero-Downtime deploy (Readiness Probe)
-- 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거하고 테스트함
-- seige로 배포중에 부하를 발생과 재배포 실행
-```bash
-root@siege:/# siege -c1 -t30S -v http://resort:8080/resorts 
-kubectl apply -f  kubernetes/deployment.yml 
+- 시나리오
+  1. 현재 구동중인 hotel 서비스에 길게(2분) 부하를 준다. 
+  2. Hotel pod의 상태 모니터링
+  3. AWS > CodeBuild에 연결 되어있는 github의 코드를 commit한다.
+  4. Codebuild를 통해 새로운 버전의 Hotel 서비스가 배포 된다. 
+  5. pod 상태 모니터링에서 기존 Hotel 서비스가 Terminating 되고 새로운 Hotel 서비스가 Running하는 것을 확인한다.
+  6. Readness에 의해서 새로운 서비스가 정상 동작할때까지 이전 버전의 서비스가 동작하여 seige의 Avality가 100%가 된다.
+
+<br/>
+
+- hotel 서비스의 Readness probe 설정 확인
+  - buildspec_kubectl.yaml
 ```
-- seige 의 화면으로 넘어가서 Availability 가 100% 미만으로 떨어졌는지 확인
-
-<img width="552" alt="image" src="https://user-images.githubusercontent.com/85722851/125045082-922dd600-e0d7-11eb-9128-4c9eff39654c.png">
-배포기간중 Availability 가 평소 100%에서 80% 대로 떨어지는 것을 확인. 원인은 쿠버네티스가 성급하게 새로 올려진 서비스를 READY 상태로 인식하여 서비스 유입을 진행한 것이기 때문. 
-
-- 이를 막기위해 Readiness Probe 를 설정함: deployment.yaml 의 readiness probe 추가
-```yml
-          readinessProbe:
-            httpGet:
-              path: '/actuator/health'
-              port: 8080
-            initialDelaySeconds: 10
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 10
+                    readinessProbe:
+                      httpGet:
+                        path: /actuator/health
+                        port: 8080
+                      initialDelaySeconds: 10
+                      timeoutSeconds: 2
+                      periodSeconds: 5
+                      failureThreshold: 10
 ```
 
-- 동일한 시나리오로 재배포 한 후 Availability 확인
-<img width="503" alt="image" src="https://user-images.githubusercontent.com/85722851/125044747-3cf1c480-e0d7-11eb-9c35-1091547bb099.png">
-배포기간 동안 Availability 가 100%를 유지하기 때문에 무정지 재배포가 성공한 것으로 확인됨.
+- 현재 구동중인 Hotel 서비스에 길게(2분) 부하를 준다. 
+```
+> siege -v -c1 -t120S http://hotel:8080/hotels  
+```
+<img width="794" alt="스크린샷 2021-09-15 오후 3 32 43" src="https://user-images.githubusercontent.com/89987635/133385792-924fefb0-562f-4697-bdc6-67baba830247.png">
+
+- AWS에 CodeBuild에 연결 되어있는 github의 코드를 commit한다.
+  Hotel 서비스의 아무 코드나 수정하고 commit 한다. 
+  배포 될때까지 잠시 기다린다. 
+  Ex) buildspec-kubectl.yaml에 carrage return을 추가 commit 한다. 
+
+- pod 상태 모니터링에서 기존 Hotel 서비스가 Terminating 되고 새로운 Hotel 서비스가 Running하는 것을 확인한다.
+- pod의 상태 모니터링
+<img width="586" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/89987635/133394310-befb67aa-4384-40f3-a33c-974f1ee52d79.png">
+
 
 
 
