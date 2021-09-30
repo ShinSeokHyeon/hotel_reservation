@@ -880,43 +880,52 @@ kubectl get deploy reservation -o yaml
 
 
 ## ConfigMap 사용
-- 시스템별로 또는 운영중에 동적으로 변경 가능성이 있는 설정들을 ConfigMap을 사용하여 관리합니다. Application에서 특정 도메일 URL을 ConfigMap 으로 설정하여 운영/개발등 목적에 맞게 변경가능합니다.
-configMap 생성
+- 시스템별로 또는 운영중에 동적으로 변경 가능성이 있는 설정들을 ConfigMap을 사용하여 관리하고, Application에서 특정 도메인 URL을 ConfigMap 으로 설정하여 운영/개발등 목적에 맞게 변경 가능 하다.
+
+- configMap 생성
+
 ```bash
 kubectl apply -f - <<EOF
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: resort-cm
+  name: hotel-cm
 data:
-    api.resort.url: resort:8080
+    api.hotel.url: hotel:8080
 EOF
 ```
-configmap 생성 후 조회
-<img width="881" alt="image" src="https://user-images.githubusercontent.com/85722851/125245232-470c0100-e32b-11eb-9db1-54f35d1b2e4c.png">
-deployment.yml 변경
+
+- configmap 생성 후 조회
+<img width="881" alt="image" src="https://user-images.githubusercontent.com/88864523/135391035-a39671ce-95d5-4e61-82b4-61697694cfb6.PNG">
+
+- reservation > buildspec-kubectl.yaml 에 앞서 생성한 ConfigMap 정보 참조 추가
 ```yml
       containers:
           ...
           env:
-            - name: feign.resort.url
+            - name: feign.hotel.url
               valueFrom:
                 configMapKeyRef:
-                  name: resort-cm
-                  key: api.resort.url
+                  name: hotel-cm
+                  key: api.hotel.url
 ```
-ResortService.java내용
-```java
-@FeignClient(name="resort", url="${feign.resort.url}")
-public interface ResortService {
 
-    @RequestMapping(method= RequestMethod.GET, value="/resorts/{id}", consumes = "application/json")
-    public Resort getResortStatus(@PathVariable("id") Long id);
+
+- ResortService.java내용
+
+```java
+@FeignClient(name="hotel", url="${feign.hotel.url}")
+public interface HotelService {
+
+    @RequestMapping(method= RequestMethod.GET, value="/hotels/{id}", consumes = "application/json")
+    public Hotel getHotelStatus(@PathVariable("id") Long id);
 
 }
 ```
+
+
 생성된 Pod 상세 내용 확인
-<img width="1036" alt="image" src="https://user-images.githubusercontent.com/85722851/125245075-162bcc00-e32b-11eb-80ab-81fa57e774d8.png">
+<img width="1036" alt="image" src="https://user-images.githubusercontent.com/88864523/135391488-fa7b7cbf-3022-4bb3-89c8-50f650492fc6.PNG">
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
