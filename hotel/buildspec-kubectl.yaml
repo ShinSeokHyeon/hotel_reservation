@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "user-shin-hotel"
+    _PROJECT_NAME: "user11-hotel"
     _POD_NAME: "hotel" # low case character
 
 phases:
