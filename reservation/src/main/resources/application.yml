@@ -82,9 +82,9 @@ spring:
           destination: hotelreservation
           contentType: application/json
 
-feign:
-  hotel:
-    url: hotel:8080
+#feign:
+#  hotel:
+#    url: hotel:8080
 
 hystrix:
   command:
