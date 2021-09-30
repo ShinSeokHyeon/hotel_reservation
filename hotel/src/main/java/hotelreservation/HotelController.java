@@ -8,15 +8,15 @@ import org.springframework.web.bind.annotation.RestController;
  @RestController
  public class HotelController {
 	
-	 /*
+	 
 	 private HotelRepository repository;
 
 	    public HotelController(HotelRepository repository){
 	        this.repository = repository;
 	    }
 	    
-	 // getResortStatus get 호출 시 400밀리초 ~ 620밀리초의 지연시간 발생시킴
-	    @RequestMapping(method= RequestMethod.GET, value="/resorts/{id}")
+	 // getHotelStatus get 호출 시 400밀리초 ~ 620밀리초의 지연시간 발생시킴
+	    @RequestMapping(method= RequestMethod.GET, value="/hotels/{id}")
 	    public Hotel getHotelStatus(@PathVariable("id") Long id){
 
 	        //hystix test code
@@ -27,5 +27,5 @@ import org.springframework.web.bind.annotation.RestController;
 	        return repository.findById(id).get();
 	    }
 
-	*/
+	
  }
