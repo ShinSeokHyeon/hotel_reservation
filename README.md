@@ -1007,7 +1007,7 @@ HTTP/1.1 500     4.32 secs:     183 bytes ==> POST http://localhost:8081/reserva
 HTTP/1.1 500     4.33 secs:     183 bytes ==> POST http://localhost:8081/reservations
 HTTP/1.1 500     4.33 secs:     183 bytes ==> POST http://localhost:8081/reservations
 
-* 다시 요청 처리 - (건당 (쓰레드당) 처리시간이 610 밀리 미만으로 회복) => 요청 수락
+* 다시 요청 처리 - (건당 (쓰레드당) 처리시간이 610 밀리 미만으로 회복) => 요청 수락 
 
 HTTP/1.1 201     4.45 secs:     343 bytes ==> POST http://localhost:8081/reservations
 HTTP/1.1 201     4.48 secs:     343 bytes ==> POST http://localhost:8081/reservations
