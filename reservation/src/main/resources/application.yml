@@ -85,6 +85,8 @@ spring:
 feign:
   hotel:
     url: hotel:8080
+  hystrix:
+    enabled: true
 
 hystrix:
   command:
