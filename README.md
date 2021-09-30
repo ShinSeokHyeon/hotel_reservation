@@ -682,7 +682,7 @@ http localhost:8083/myPages #정상적으로 마이페이지에서 예약 이력
 
 - 레포지터리 생성 확인
 
-<img width="1251" alt="(1) 레포지터리 생성 확인" src="https://user-images.githubusercontent.com/88864523/134778989-263ea363-95bb-4f1e-890c-9318dc07e59d.PNG">
+<img width="1251" alt="(1) 레포지터리 생성 확인" src="https://user-images.githubusercontent.com/88864523/135371647-dc8ab29e-38c0-4897-aae7-195c8a1faf8d.PNG">
 
 <br/>
 
