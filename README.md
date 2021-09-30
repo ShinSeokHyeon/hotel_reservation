@@ -24,7 +24,7 @@
     - [Self-healing (Liveness Probe)](#Self-healing-Liveness-Probe)
     - [ConfigMap 사용](#ConfigMap-사용) 
 
-    
+     
 # 서비스 시나리오
 - 기능적 요구사항(전체)
 1. 호텔 관리자는 호텔을 등록한다.
