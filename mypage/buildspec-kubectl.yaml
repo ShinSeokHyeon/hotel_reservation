@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    _PROJECT_NAME: "user-shin-mypage"
+    _PROJECT_NAME: "user11-mypage"
     _POD_NAME: "mypage" # low case character
 
 phases:
