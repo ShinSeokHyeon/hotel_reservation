@@ -80,11 +80,11 @@ phases:
                     ports:
                       - containerPort: 8080
                     env:
-                      - name: feign.resort.url
+                      - name: feign.hotel.url
                         valueFrom:
                          configMapKeyRef:
-                          name: resort-cm
-                          key: api.resort.url
+                          name: hotel-cm
+                          key: api.hotel.url
                     readinessProbe:
                       httpGet:
                         path: /actuator/health
