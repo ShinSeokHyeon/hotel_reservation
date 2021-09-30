@@ -874,7 +874,7 @@ kubectl get deploy reservation -o yaml
 
 - pod 상태 모니터링에서 기존 Hotel 서비스가 Terminating 되고 새로운 Hotel 서비스가 Running하는 것을 확인한다.
 - pod의 상태 모니터링
-<img width="586" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/88864523/135385406-913a8463-f423-4d3d-ac15-88209a2142e6.PNG">
+<img width="586" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/88864523/135386347-7ba5dff0-a6fb-4e7f-9cd8-d72c9c904b75.PNG">
 
 
 
