@@ -22,7 +22,7 @@
     - [Self-healing (Liveness Probe)](#Self-healing-Liveness-Probe)
     - [Zero-Downtime deploy (Readiness Probe)](#Zero-Downtime-deploy-Readiness-Probe)
     - [ConfigMap 사용](#ConfigMap-사용)
-    - [서킷 브레이킹 / 장애격리](#동기식-호출--서킷-브레이킹--장애격리) 
+    - [서킷 브레이킹 / 장애격리](#서킷-브레이킹--장애격리) 
 
      
 # 서비스 시나리오
@@ -927,12 +927,15 @@ public interface HotelService {
 생성된 Pod 상세 내용 확인
 <img width="1036" alt="image" src="https://user-images.githubusercontent.com/88864523/135391488-fa7b7cbf-3022-4bb3-89c8-50f650492fc6.PNG">
 
-## 동기식 호출 / 서킷 브레이킹 / 장애격리
+
+
+## 서킷 브레이킹 / 장애격리 (제대로 구현 하지 못함)
 
 * 서킷 브레이크 프레임워크 : Spring FeignClient + Hystrix 옵션을 사용
 
-- 시나리오 : 예약(reservation) -> 호텔(hotel) 예약 시 RESTful Request/Response 로 구현 하였고, 예약 요청이 과도할 경우 circuit breaker 를 통하여 장애격리.
-Hystrix 설정: 요청처리 쓰레드에서 처리시간이 610 밀리초가 넘어서기 시작하여 어느정도 유지되면 circuit breaker 수행됨
+- 예약(reservation) -> 호텔(hotel) 예약 시 RESTful Request/Response 로 구현 하였고, 예약 요청이 과도할 경우 circuit breaker 를 통하여 장애격리.
+
+- Hystrix 설정: 요청처리 쓰레드에서 처리시간이 610 밀리초가 넘어서기 시작하여 어느정도 유지되면 circuit breaker 수행
 
 ```yaml
 # application.yml
@@ -948,7 +951,7 @@ hystrix:
 
 ```
 
-피호출 서비스(호텔:hotel) 의 임의 부하 처리 - 400 밀리초 ~ 620밀리초의 지연시간 부여
+- 피호출 서비스(호텔:hotel) 의 임의 부하 처리 - 400 밀리초 ~ 620밀리초의 지연시간 부여
 ```java
 # (hotel) HotelController.java 
 
@@ -964,112 +967,37 @@ hystrix:
         }
 ```
 
+- Resevation 서비스에 FeignClient fallback 코드 추가
+```java
+# (reservation) HotelService.java 
+
+@FeignClient(name="hotel", url="${feign.hotel.url}", fallback = HotelServiceFallback.class)
+
+```
+
+```java
+# (reservation) HotelServiceFallback.java 
+@Component
+public class HotelServiceFallback implements HotelService {
+
+	// circuit breaker 발동 시 Hotel을 null값으로 리턴하며 "Circuit breaker has been opened. Fallback returned instead." 문구 출력
+    @Override
+    public Hotel getHotelStatus(Long id) {
+        System.out.println("Circuit breaker has been opened. Fallback returned instead.");
+        return null;
+    }
+
+}
+
+```
+
 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인 : 동시사용자 100명, 10초 동안 실시
 
 ```bash
-$ siege -v -c100 -t10S -r10 --content-type "application/json" 'http://localhost:8081/reservations POST {"resortId":1, "memberName":"MK"}'
-
-** SIEGE 4.0.5
-** Preparing 100 concurrent users for battle.
-The server is now under siege...
-
-HTTP/1.1 201     3.64 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     3.64 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     3.70 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     3.94 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     3.98 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.00 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.05 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.05 secs:     343 bytes ==> POST http://localhost:8081/reservations
-
-* 요청이 과도하여 CB를 동작함 요청을 차단
-
-HTTP/1.1 500     4.07 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.07 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.07 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.07 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.07 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.08 secs:     183 bytes ==> POST http://localhost:8081/reservations
-
-* 요청을 어느정도 돌려보내고나니, 기존에 밀린 일들이 처리되었고, 회로를 닫아 요청을 다시 받기 시작
-
-HTTP/1.1 201     4.12 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.18 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.25 secs:     343 bytes ==> POST http://localhost:8081/reservations
-
-* 다시 요청이 쌓이기 시작하여 건당 처리시간이 610 밀리를 살짝 넘기기 시작 => 회로 열기 => 요청 실패처리
-
-HTTP/1.1 500     4.32 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.32 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.32 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.32 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.32 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.33 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.33 secs:     183 bytes ==> POST http://localhost:8081/reservations
-
-* 다시 요청 처리 - (건당 (쓰레드당) 처리시간이 610 밀리 미만으로 회복) => 요청 수락 
-
-HTTP/1.1 201     4.45 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.48 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.53 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.54 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.58 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.66 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.70 secs:     343 bytes ==> POST http://localhost:8081/reservations
-
-* 이후 이러한 패턴이 계속 반복되면서 시스템은 도미노 현상이나 자원 소모의 폭주 없이 잘 운영됨
-
-HTTP/1.1 201     4.39 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.50 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.64 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.65 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.66 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.67 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.38 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.83 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.46 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.08 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     3.92 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     3.91 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.46 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.47 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.57 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.58 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.65 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.68 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.68 secs:     343 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.66 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.69 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.40 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.40 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.34 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.50 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.42 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.54 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.52 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.21 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.52 secs:     345 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 500     4.36 secs:     183 bytes ==> POST http://localhost:8081/reservations
-HTTP/1.1 201     4.35 secs:     345 bytes ==> POST http://localhost:8081/reservations
-
-Lifting the server siege...
-Transactions:                    152 hits
-Availability:                  80.85 %
-Elapsed time:                   9.66 secs
-Data transferred:               0.06 MB
-Response time:                  4.92 secs
-Transaction rate:              15.73 trans/sec
-Throughput:                     0.01 MB/sec
-Concurrency:                   77.34
-Successful transactions:         152
-Failed transactions:              36
-Longest transaction:            5.63
-Shortest transaction:           1.33
+$ siege -v -c100 -t10S -r10 --content-type "application/json" 'http://reservation:8080/reservations/ POST {"hotelId": 1, "memberName":"Shin Seok Hyeon"}'
 
 ```
+
 - siege 수행 결과
 
-![image](https://user-images.githubusercontent.com/58622901/125236603-40778c80-e31f-11eb-81a7-eeaa4863239d.png)
-
-![image](https://user-images.githubusercontent.com/58622901/125236641-4ff6d580-e31f-11eb-8659-6886b5cfacc5.png)
 
