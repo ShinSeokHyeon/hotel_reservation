@@ -39,9 +39,17 @@ logging:
 server:
   port: 8081
 
+#feign:
+  #hotel:
+    #url: localhost:8082
+  #hystrix:
+    #enabled: true
+
+api:
+  url:
+    hotel: http://localhost:8082/hotels
+
 feign:
-  hotel:
-    url: localhost:8082
   hystrix:
     enabled: true
 
@@ -82,9 +90,17 @@ spring:
           destination: hotelreservation
           contentType: application/json
 
+#feign:
+  #hotel:
+    #url: hotel:8080
+  #hystrix:
+    #enabled: true
+
+api:
+  url:
+    hotel: http://hotel:8080/hotels
+
 feign:
-  hotel:
-    url: hotel:8080
   hystrix:
     enabled: true
 
