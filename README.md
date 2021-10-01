@@ -991,7 +991,7 @@ public class HotelServiceFallback implements HotelService {
 
 ```
 
-부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인 : 동시사용자 100명, 10초 동안 실시
+- 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인 : 동시사용자 100명, 10초 동안 실시
 
 ```bash
 $ siege -v -c100 -t10S -r10 --content-type "application/json" 'http://reservation:8080/reservations/ POST {"hotelId": 1, "memberName":"Shin Seok Hyeon"}'
@@ -999,5 +999,10 @@ $ siege -v -c100 -t10S -r10 --content-type "application/json" 'http://reservatio
 ```
 
 - siege 수행 결과
+<img width="794" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/88864523/135552071-0a7378d0-abcd-46f3-81e4-d16d4bb3a6f8.PNG">
+<img width="794" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/88864523/135552222-eb9eeb13-f107-4e6b-9861-be69039f1039.PNG">
+
+- 예약 서비스(reservation) 로그 확인 결과
+<img width="794" alt="스크린샷 2021-09-15 오후 4 59 23" src="https://user-images.githubusercontent.com/88864523/135552314-2a93f8dc-eb97-4890-b574-faef5fe31881.PNG">
 
 
